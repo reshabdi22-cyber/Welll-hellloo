@@ -5,256 +5,233 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>THE VAULT // W.R. ❤️</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         :root {
-            --primary: #ff3366;
-            --primary-glow: rgba(255, 51, 102, 0.3);
-            --bg: #050001;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --accent: #ff3366;
+            --accent-glow: rgba(255, 51, 102, 0.4);
+            --bg-deep: #050001;
+            --card-bg: rgba(18, 18, 18, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: white;
-            font-family: 'Inter', -apple-system, sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+        body, html { 
+            margin: 0; padding: 0; height: 100%; 
+            background: var(--bg-deep); color: white;
+            font-family: var(--font-main); overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* Ambient Background Glow */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 300px; height: 300px;
-            background: var(--primary);
-            filter: blur(150px);
-            opacity: 0.15;
-            z-index: 0;
+        /* Ambient Dynamic Background */
+        .bg-glow {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.15; z-index: -1; transition: opacity 1s ease;
         }
 
         .stage {
-            position: relative;
-            z-index: 10;
-            display: none;
-            opacity: 0;
-            transform: scale(0.95) translateY(10px);
-            transition: var(--transition);
-            width: 90%;
-            max-width: 400px;
-            background: rgba(15, 15, 15, 0.8);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: 32px;
-            padding: 35px 25px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative; z-index: 10; display: none;
+            flex-direction: column; width: 92%; max-width: 400px;
+            background: var(--card-bg); backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border); border-radius: 35px;
+            padding: 40px 25px; text-align: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.9);
+            transform: scale(0.98); opacity: 0;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .stage.active { display: flex; flex-direction: column; opacity: 1; transform: scale(1) translateY(0); }
+        .stage.active { display: flex; opacity: 1; transform: scale(1); }
 
         .pill {
-            background: rgba(255, 51, 102, 0.1);
-            color: #ff85a2;
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0 auto 20px;
-            border: 1px solid rgba(255, 51, 102, 0.2);
+            background: rgba(255, 51, 102, 0.08); color: var(--accent);
+            padding: 7px 16px; border-radius: 100px; font-size: 0.7rem;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+            margin: 0 auto 25px; border: 1px solid rgba(255, 51, 102, 0.15);
         }
 
-        h1 { font-size: 1.6rem; font-weight: 900; margin: 0 0 10px; letter-spacing: -0.5px; }
-        
-        /* Grid styling */
-        .photo-vault {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-            max-height: 220px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .photo-vault::-webkit-scrollbar { width: 4px; }
-        .photo-vault::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        h1 { font-size: 1.7rem; font-weight: 900; margin: 0 0 12px; letter-spacing: -0.8px; }
 
-        .photo-vault img {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 12px;
+        .photo-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin: 25px 0; max-height: 230px; overflow-y: auto; padding: 5px;
+        }
+        .photo-grid img { 
+            width: 100%; aspect-ratio: 1; object-fit: cover; 
+            border-radius: 14px; border: 1px solid var(--glass-border);
             transition: transform 0.3s ease;
         }
+        .photo-grid img:hover { transform: scale(1.05); }
 
-        .message-box {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #ccc;
-            background: var(--glass);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: left;
-            margin-bottom: 20px;
-            border: 1px solid var(--glass-border);
+        .msg-box {
+            font-size: 0.9rem; line-height: 1.65; color: #d1d1d1;
+            background: rgba(255,255,255,0.03); padding: 22px;
+            border-radius: 24px; text-align: left; margin-bottom: 25px;
+            border-left: 3px solid var(--accent);
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 100px;
-            font-weight: 800;
-            font-size: 1rem;
-            width: 100%;
-            cursor: pointer;
-            box-shadow: 0 10px 20px var(--primary-glow);
-            transition: var(--transition);
+        .btn-main {
+            background: var(--accent); color: white; border: none;
+            padding: 20px; border-radius: 100px; font-weight: 800;
+            font-size: 1rem; width: 100%; cursor: pointer;
+            box-shadow: 0 10px 30px var(--accent-glow);
+            transition: all 0.3s ease;
         }
-
-        .btn-primary:active { transform: scale(0.96); }
+        .btn-main:active { transform: scale(0.97); filter: brightness(1.2); }
 
         #noBtn {
-            position: absolute;
-            background: white;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 900;
-            font-size: 0.8rem;
-            cursor: pointer;
-            z-index: 100;
-            transition: top 0.2s ease, left 0.2s ease;
+            position: absolute; background: white; color: black;
+            border: none; padding: 12px 24px; border-radius: 50px;
+            font-weight: 900; font-size: 0.85rem; cursor: pointer;
+            z-index: 100; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        .stat-card {
-            background: var(--glass);
-            padding: 15px;
-            border-radius: 18px;
-            margin-top: 10px;
+        .stat-group {
+            background: rgba(255,255,255,0.02); padding: 18px;
+            border-radius: 22px; margin-top: 12px; text-align: left;
             border: 1px solid var(--glass-border);
-            text-align: left;
         }
+        .stat-label { font-size: 0.75rem; opacity: 0.5; margin-bottom: 5px; }
+        .stat-val { font-family: var(--font-code); color: var(--accent); font-size: 1.1rem; font-weight: 600; }
 
-        .stat-label { font-size: 0.75rem; opacity: 0.6; margin-bottom: 4px; }
-        .stat-value { font-family: monospace; font-size: 1rem; font-weight: 700; color: var(--primary); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 <body>
 
+<div class="bg-glow" id="glow"></div>
 <audio id="bdayMusic" loop><source src="bday.mp3" type="audio/mpeg"></audio>
 
 <div id="stage-1" class="stage active">
-    <div class="pill">Secure Vault Access</div>
+    <div class="pill">Encryption Active</div>
     <h1>HALLÅ SNYGGING</h1>
-    <p style="opacity: 0.6; font-size: 0.9rem; margin-bottom: 30px;">It's simple, but I did it for you.</p>
-    <div style="position: relative; height: 60px;">
-        <button class="btn-primary" onclick="transitionTo(2)">yesssss</button>
-        <button id="noBtn" onmouseover="dodge()" ontouchstart="dodge()">NOPE!🫢</button>
+    <p style="opacity: 0.5; font-size: 0.95rem; margin-bottom: 35px;">Ready to unlock the vault?</p>
+    <div style="position: relative; height: 65px;">
+        <button class="btn-main" onclick="handleNavigation(2)">Öppna Vault ❤️</button>
+        <button id="noBtn" onmouseover="teleport()" ontouchstart="teleport()">NEJ!🫢</button>
     </div>
 </div>
 
 <div id="stage-2" class="stage">
-    <div class="pill">Grattis på födelsedagen</div>
+    <div class="pill">Verified User: Honeyy</div>
     <h1>NOVA & DAISY</h1>
-    <div class="photo-vault">
-        <img src="https://i.postimg.cc/gJcRy7Jq/1-jpg.jpg">
-        <img src="https://i.postimg.cc/mkHYX5xW/2-jpg.jpg">
-        <img src="https://i.ibb.co/5gNNZkPy/IMG-001.jpg">
-        <img src="https://i.ibb.co/j9wxNjR5/IMG-002.jpg">
-        <img src="https://i.ibb.co/7tMGppGZ/IMG-003.jpg">
-        <img src="https://i.ibb.co/YBrR9QfP/IMG-004.jpg">
-        <img src="https://i.ibb.co/Y7cTbL2Z/IMG-005.jpg">
-        <img src="https://i.ibb.co/XfTPG0rt/IMG-006.jpg">
-        <img src="https://i.ibb.co/tM4rTMXX/IMG-007.jpg">
+    <div class="photo-grid" id="imageContainer"></div>
+    <div class="msg-box">
+        Grattis på födelsedagen honeyy! Jag kan inte fatta att du faktiskt är vuxen nu... Du är genuint nånting så speciellt i mitt liv. <br><br>
+        Drick inte för mycket med din pappa utan mig nu va? 😌😏 
     </div>
-    <div class="message-box">
-        Honeyy, jag kan inte fatta att du faktiskt är vuxen nu... Du är genuint nånting så speciellt i mitt liv. <br><br>
-        Jag vill bara att du ska vara lycklig på riktigt. Men hallå, drick inte för mycket med din pappa utan mig nu va? 😌😏 
-    </div>
-    <button class="btn-primary" onclick="transitionTo(3)">One more thing cutiee</button>
+    <button class="btn-main" onclick="handleNavigation(3)">The Final Key</button>
 </div>
 
 <div id="stage-3" class="stage">
-    <div class="pill">Lifetime Statistics</div>
-    <h1>THE FINAL SURPRISE</h1>
-    <div class="stat-card">
-        <div class="stat-label">How long you've blessed the world:</div>
-        <div id="timer-life" class="stat-value">Calculating...</div>
+    <div class="pill">Real-time Metrics</div>
+    <h1>THE ARCHIVE</h1>
+    <div class="stat-group">
+        <div class="stat-label">Existence duration:</div>
+        <div id="timer-life" class="stat-val">Initializing...</div>
     </div>
-    <div class="stat-card" style="border-color: var(--primary);">
-        <div class="stat-label">Time since I knew you existed:</div>
-        <div id="timer-us" class="stat-value">Calculating...</div>
+    <div class="stat-group" style="border-color: var(--accent);">
+        <div class="stat-label">Known connection duration:</div>
+        <div id="timer-us" class="stat-val">Initializing...</div>
     </div>
-    <p style="margin-top: 30px; font-weight: 800; font-size: 1.1rem;">Jag älskar dig så jävla mycket ♾️</p>
+    <p style="margin-top: 35px; font-weight: 900; font-size: 1.2rem; color: white;">Jag älskar dig så jävla mycket ♾️</p>
 </div>
 
 <script>
-    const BIRTH_DATE = new Date(2008, 3, 24); 
-    const MET_DATE = new Date(2025, 11, 1); 
+    /**
+     * @constant DATA - Centralized repository of all user assets and dates
+     */
+    const DATA = {
+        BIRTH: new Date(2008, 3, 24),
+        MET: new Date(2025, 11, 1),
+        IMAGES: [
+            "https://i.postimg.cc/gJcRy7Jq/1-jpg.jpg",
+            "https://i.postimg.cc/mkHYX5xW/2-jpg.jpg",
+            "https://i.ibb.co/5gNNZkPy/IMG-001.jpg",
+            "https://i.ibb.co/j9wxNjR5/IMG-002.jpg",
+            "https://i.ibb.co/7tMGppGZ/IMG-003.jpg",
+            "https://i.ibb.co/YBrR9QfP/IMG-004.jpg",
+            "https://i.ibb.co/Y7cTbL2Z/IMG-005.jpg",
+            "https://i.ibb.co/XfTPG0rt/IMG-006.jpg",
+            "https://i.ibb.co/tM4rTMXX/IMG-007.jpg"
+        ]
+    };
+
     const audio = document.getElementById('bdayMusic');
 
-    function transitionTo(stageNum) {
-        // Start audio and confetti on Stage 2
-        if (stageNum === 2) {
-            audio.play().catch(() => console.log("Audio waiting for user interaction"));
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff3366', '#ffffff'] });
+    /**
+     * @function handleNavigation - Orchestrates stage transitions and triggers effects
+     */
+    function handleNavigation(targetStage) {
+        // Audio & Visual Effects Trigger
+        if (targetStage === 2) {
+            audio.play().catch(() => console.warn("Audio blocked by browser policy."));
+            confetti({ 
+                particleCount: 180, spread: 80, origin: { y: 0.65 },
+                colors: ['#ff3366', '#ffffff', '#ff85a2'] 
+            });
+            populateImages();
         }
 
-        // Smooth transition logic
-        document.querySelectorAll('.stage').forEach(s => {
-            s.style.opacity = '0';
-            s.style.transform = 'scale(0.95) translateY(10px)';
-            setTimeout(() => s.style.display = 'none', 500);
+        // Logic to clear existing active state
+        document.querySelectorAll('.stage').forEach(el => {
+            el.classList.remove('active');
+            setTimeout(() => el.style.display = 'none', 600);
         });
 
-        const next = document.getElementById(`stage-${stageNum}`);
+        // Activation of target state
+        const next = document.getElementById(`stage-${targetStage}`);
         setTimeout(() => {
             next.style.display = 'flex';
             setTimeout(() => next.classList.add('active'), 50);
-        }, 550);
+        }, 600);
 
-        if (stageNum === 3) startTimers();
+        if (targetStage === 3) startChronology();
     }
 
-    function dodge() {
+    function populateImages() {
+        const container = document.getElementById('imageContainer');
+        if(container.innerHTML !== "") return; // Prevent double population
+        DATA.IMAGES.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            container.appendChild(img);
+        });
+    }
+
+    function teleport() {
         const btn = document.getElementById('noBtn');
-        const x = Math.random() * (window.innerWidth - 120);
-        const y = Math.random() * (window.innerHeight - 50);
+        const padding = 50;
+        const x = Math.random() * (window.innerWidth - btn.offsetWidth - padding);
+        const y = Math.random() * (window.innerHeight - btn.offsetHeight - padding);
         btn.style.position = 'fixed';
-        btn.style.left = `${x}px`;
-        btn.style.top = `${y}px`;
+        btn.style.left = `${Math.max(padding, x)}px`;
+        btn.style.top = `${Math.max(padding, y)}px`;
     }
 
-    function startTimers() {
+    function startChronology() {
         setInterval(() => {
-            document.getElementById('timer-life').innerText = getTimeSince(BIRTH_DATE);
-            document.getElementById('timer-us').innerText = getTimeSince(MET_DATE);
+            document.getElementById('timer-life').innerText = calculateDelta(DATA.BIRTH);
+            document.getElementById('timer-us').innerText = calculateDelta(DATA.MET);
         }, 1000);
     }
 
-    function getTimeSince(date) {
-        const diff = new Date() - date;
-        const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
-        const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 365.25);
+    function calculateDelta(startDate) {
+        const diff = new Date() - startDate;
+        const yr = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        const day = Math.floor((diff / (1000 * 60 * 60 * 24)) % 365.25);
         const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const m = Math.floor((diff / (1000 * 60)) % 60);
         const s = Math.floor((diff / 1000) % 60);
-        return `${years}Y ${days}D | ${h}H:${m}M:${s}S`;
+        return `${yr}ÅR ${day}D | ${h}H:${m}M:${s}S`;
     }
 </script>
 
